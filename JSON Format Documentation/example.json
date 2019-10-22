@@ -1,0 +1,16 @@
+{
+  "ingredients": [
+    {
+      "id": "String",
+      "name": "String",
+      "amounts": [
+        {
+          "amount": "Number",
+          "unit": "String"
+        }
+      ],
+      "processing": ["Strings"],
+      "notes": ["Strings"]
+    }
+  ]
+}
