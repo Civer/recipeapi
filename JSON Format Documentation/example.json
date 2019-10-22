@@ -1,7 +1,9 @@
 {
+  "recipe_name": "String",
+  "recipe_uuid": "String",
   "ingredients": [
     {
-      "id": "String",
+      "X-id": "String",
       "name": "String",
       "amounts": [
         {
@@ -12,5 +14,18 @@
       "processing": ["Strings"],
       "notes": ["Strings"]
     }
-  ]
+  ],
+  "steps": [
+    {
+      "step": "String",
+      "notes": "String"
+    }
+  ],
+  "yields": [
+    {
+      "amount": "Number",
+      "unit": "String"
+    }
+  ],
+  "notes": ["Strings"]
 }
