@@ -9,6 +9,7 @@ const colors = require("colors");
 // Import Route Functions
 
 const CreateRecipe = require("./dist/routes/CreateRecipe");
+const GetRecipe = require("./dist/routes/GetRecipe");
 
 //Import Helper Functions
 
@@ -34,7 +35,8 @@ app.use(express.static(path.join(__dirname, "public")));
 // Define Routes
 
 //Endpoints: Create Recipe, Read Recipe, Update Recipe
-app.use("/", CreateRecipe);
+app.use("/recipe/", CreateRecipe);
+app.use("/recipe/", GetRecipe);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -5,15 +5,14 @@ const express = require("express");
 const router = express.Router();
 const DBFunctions = require("../functions/DBFunctions");
 const ObjectId = require("mongodb").ObjectId;
-router.post("/", (request, resolve) => {
-    const token = request.cookies.token;
-    const recipe = request.body.recipe;
-    const recipe_id = recipe.recipe_uuid;
+router.get("/:id", (request, resolve) => {
+    const recipe_id = request.params.id;
+    console.log(recipe_id);
     if (recipe_id) {
         var recipeObjectId = new ObjectId(recipe_id);
-        DBFunctions.dbReplaceData("recipe", { _id: recipeObjectId }, recipe)
+        DBFunctions.dbFetchData("recipe", { _id: recipeObjectId })
             .then((res) => {
-            resolve.json("Modified " + res.modifiedCount + " entry");
+            resolve.json(res);
         })
             .catch((err) => {
             console.log(err);
@@ -21,13 +20,11 @@ router.post("/", (request, resolve) => {
         });
     }
     else {
-        DBFunctions.dbInsertData("recipe", recipe)
-            .then((res) => {
-            resolve.json(res.insertedId);
-        })
-            .catch((err) => {
-            console.log(err);
-            resolve.json("Undefined Error");
+        resolve.json({
+            error: {
+                id: "3101",
+                message: "Parameter Id is necessary."
+            }
         });
     }
 });
