@@ -38,11 +38,7 @@ var getDB = function() {
  *
  * @returns {Array.object}    MongoDB result
  */
-var dbFetchData = function(
-  collection: string,
-  query: object,
-  projection: object
-) {
+var dbFetchData = function(collection: string, query: any, projection: any) {
   return new Promise(function(resolve, reject) {
     getDB()
       .then((db: any) => {

@@ -1,3 +1,7 @@
+//Initiate Typescript Module
+export {};
+
+//Write Router Code
 const express = require("express");
 const router = express.Router();
 const DBFunctions = require("../functions/DBFunctions");
@@ -12,7 +16,7 @@ router.post("/", (request: any, resolve: any) => {
     var recipeObjectId = new ObjectId(recipe_id);
     DBFunctions.dbReplaceData("recipe", { _id: recipeObjectId }, recipe)
       .then((res: any) => {
-        resolve.json("Modified " + res.modifiedCount + " entry");
+        resolve.json("Replaced " + res.modifiedCount + " entry");
       })
       .catch((err: any) => {
         console.log(err);
@@ -28,7 +32,6 @@ router.post("/", (request: any, resolve: any) => {
         resolve.json("Undefined Error");
       });
   }
-  let id: string;
 });
 
 module.exports = router;
