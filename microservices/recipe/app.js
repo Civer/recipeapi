@@ -10,6 +10,7 @@ const colors = require("colors");
 
 const CreateRecipe = require("./dist/routes/CreateRecipe");
 const GetRecipe = require("./dist/routes/GetRecipe");
+const SearchRecipes = require("./dist/routes/SearchRecipes");
 
 //Import Helper Functions
 
@@ -35,8 +36,12 @@ app.use(express.static(path.join(__dirname, "public")));
 // Define Routes
 
 //Endpoints: Create Recipe, Read Recipe, Update Recipe
-app.use("/recipe/", CreateRecipe);
-app.use("/recipe/", GetRecipe);
+app.use("/recipe/create/", CreateRecipe);
+app.use("/recipe/get/", GetRecipe);
+app.use("/recipe/search/", SearchRecipes);
+app.use("/documentation/", (req, res) => {
+  res.redirect("documentation.html");
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -52,7 +57,7 @@ app.use(function(err, req, res, next) {
   console.error("[ERROR]".red + "[ROUTING] =>".yellow + " " + error.bold);
 
   // render the error page
-  res.redirect("error.html");
+  res.sendStatus(err.status || 500);
 });
 
 module.exports = app;

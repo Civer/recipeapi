@@ -13,7 +13,7 @@ router.post("/", (request, resolve) => {
         var recipeObjectId = new ObjectId(recipe_id);
         DBFunctions.dbReplaceData("recipe", { _id: recipeObjectId }, recipe)
             .then((res) => {
-            resolve.json("Modified " + res.modifiedCount + " entry");
+            resolve.json("Replaced " + res.modifiedCount + " entry");
         })
             .catch((err) => {
             console.log(err);
