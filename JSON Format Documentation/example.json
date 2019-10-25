@@ -3,7 +3,7 @@
   "recipe_uuid": "String",
   "ingredients": [
     {
-      "X-id": "String",
+      "x_id": "String",
       "name": "String",
       "amounts": [
         {

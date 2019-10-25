@@ -1,0 +1,230 @@
+<html>
+  <head>
+    <title>Recipe API Documentation</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <h1>Recipe</h1>
+    <h2>Endpoints for managing recipes</h2>
+    <p>Base URL: <code>http://APIServerIP/recipe/</code></p>
+    <table>
+      <thead>
+        <tr>
+          <th>METHOD</th>
+          <th>ENDPOINT</th>
+          <th>USAGE</th>
+          <th>RETURNS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>POST</td>
+          <td>/recipe/create</td>
+          <td>Used for creating new recipes or updating existing ones</td>
+          <td>info</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td>/recipe/get</td>
+          <td>Used for getting a recipe based on ID</td>
+          <td>recipe</td>
+        </tr>
+        <tr>
+          <td>GET</td>
+          <td>/recipe/search</td>
+          <td>Used for searching recipes based on params</td>
+          <td>recipe[]</td>
+        </tr>
+      </tbody>
+    </table>
+    <br />
+    <br />
+    <hr />
+
+    <h2>POST: /recipe/create</h2>
+    <p>
+      This method creates either creates a new recipe or updates and existing
+      recipe based on the uuid
+    </p>
+    <h3>Request Parameters</h3>
+    <h4>Body Parameters</h4>
+
+    <table>
+      <thead>
+        <tr>
+          <th>REQUEST BODY DATA</th>
+          <th>VALUE TYPE</th>
+          <th>VALUE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>recipe</td>
+          <td>JSON object</td>
+          <td>
+            <i>Mandatory:</i> A JSON Object in Open JSON Recipe Format.
+            Optionally with recipe_uuid filled. If recipe_uuid is filled the
+            uuid will used to perform a search in database and update existing
+            object. If uuid is not filled a new recipe will be created.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>Cookie Parameters</h4>
+
+    <table>
+      <thead>
+        <tr>
+          <th>COOKIE NAME</th>
+          <th>VALUE TYPE</th>
+          <th>VALUE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>token</td>
+          <td>Bearer Token</td>
+          <td>
+            <i>Mandatory</i>A signed Bearer Token signed with your secret API
+            key. Containing mandatory parameter <code>user</code>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Response Format</h3>
+
+    <p>
+      If a new recipe is created return parameter will be the
+      <code>uuid</code> of newly created recipe. If recipe is updated a message
+      of succesful update is returned. If an error occurs it will be returned.
+    </p>
+
+    <br />
+    <hr />
+
+    <h2>GET: /recipe/get</h2>
+    <p>
+      This method returns a recipe based on uuid
+    </p>
+    <h3>Request Parameters</h3>
+    <h4>Path Parameters</h4>
+
+    <table>
+      <thead>
+        <tr>
+          <th>PATH PARAMETER</th>
+          <th>VALUE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>recipe_uuid</td>
+          <td>
+            The UUID of the recipe. UUID is a 12 byte String returned after
+            succesful creation of recipe.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Example: <code>IP/recipe/get/5db1d72c1a6d732590c1a08d</code></p>
+
+    <h4>Cookie Parameters</h4>
+
+    <table>
+      <thead>
+        <tr>
+          <th>COOKIE NAME</th>
+          <th>VALUE TYPE</th>
+          <th>VALUE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>token</td>
+          <td>Bearer Token</td>
+          <td>
+            <i>Mandatory</i>A signed Bearer Token signed with your secret API
+            key. Containing mandatory parameter <code>user</code>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Response Format</h3>
+
+    <p>
+      Returns the recipe in Open JSON Recipe Format O(J)RF
+    </p>
+
+    <br />
+    <hr />
+
+    <h2>GET: /recipe/search</h2>
+    <p>
+      This method returns a recipe based on uuid
+    </p>
+    <h3>Request Parameters</h3>
+    <h4>Path Parameters</h4>
+
+    <table>
+      <thead>
+        <tr>
+          <th>PATH PARAMETER</th>
+          <th>VALUE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>search_object</td>
+          <td>
+            Type of search. Possible parameters:
+            <ul>
+              <li>recipe_name</li>
+              <li>ingredient_name</li>
+              <li>ingredient_x_id</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td>search_string</td>
+          <td>
+            String used in search
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Example: <code>IP/recipe/search/recipe_name&Apfelkuchen</code></p>
+
+    <h4>Cookie Parameters</h4>
+
+    <table>
+      <thead>
+        <tr>
+          <th>COOKIE NAME</th>
+          <th>VALUE TYPE</th>
+          <th>VALUE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>token</td>
+          <td>Bearer Token</td>
+          <td>
+            <i>Mandatory</i>A signed Bearer Token signed with your secret API
+            key. Containing mandatory parameter <code>user</code>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Response Format</h3>
+
+    <p>
+      Returns the recipe in Open JSON Recipe Format O(J)RF
+    </p>
+  </body>
+</html>
