@@ -1,0 +1,17 @@
+{
+  "description": "This browser plugin grabs a recipe from a supported site and saves it in a JSON-ified version of Open Recipe Format.",
+  "manifest_version": 2,
+  "name": "Grab recipe",
+  "version": "0.1",
+  "homepage_url": "https://github.com/Civer/recipeapi/browser_plugins/firefox_plugin",
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.chefkoch.de/rezepte/*"
+      ],
+      "js": [
+        "grab_recipe.js"
+      ]
+    }
+  ]
+}
