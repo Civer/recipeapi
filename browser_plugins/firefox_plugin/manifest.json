@@ -14,7 +14,7 @@
       "38": "icons/bitsies_food.svg"
     },
     "default_title": "Grab that recipe",
-    "default_popup": "page_action/addon_popup.html",
+    "default_popup": "page_action/page_action_popup.html",
     "show_matches": [
       "*://*.chefkoch.de/rezepte/*"
     ]
@@ -33,11 +33,6 @@
         "default": "Ctrl+Shift+R"
       }
     }
-  },
-  "background": {
-    "scripts": [
-      "grab_recipe.js"
-    ]
   },
   "content_scripts": [
     {
