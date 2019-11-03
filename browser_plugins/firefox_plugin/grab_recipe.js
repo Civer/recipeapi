@@ -1,47 +1,113 @@
-/* Parse DOM to extract various elements of a recipe */
+// Declare grabbed_recipe to be global, as we need it in multiple places.
+// Should be rewritten with more local scoping.
+var grabbed_recipe;
 
-/* Recipe Name */
-var recipe_name = document.querySelector(".recipe-header h1").textContent;
-
-/* Ingredients
-  List of String for name, Number, Unit
-*/
-function parse_recipe_ingredient(ingredients_entry) {
-    ingredient_name = ingredients_entry.querySelector("td.td-right").textContent.trim();
-    ingredient_amount_and_unit = ingredients_entry.querySelector("td.td-left").textContent.trim().replace(/\s\s+/g, ' ').split(' ');
-
-    ingredient = {name: ingredient_name, amounts: [ { amount: ingredient_amount_and_unit[0], unit: ingredient_amount_and_unit[1]} ]};
-
-    return ingredient;
+/**
+ * Generic error handler.
+ */
+function handleError(error) {
+    console.log(`Error: ${error}`);
 }
 
-var recipe_ingredients_raw = document.querySelectorAll("table.ingredients tr");
-var recipe_ingredients = []
-for (index = 0; index < recipe_ingredients_raw.length; ++index) {
-    recipe_ingredients.push(parse_recipe_ingredient(recipe_ingredients_raw[index]));
+/* Although we want to send only to one tab, the active one, the API can only send to tabs plural. */
+function sendMessageToTabs(tabs) {
+    for (let tab of tabs) {
+	browser.tabs.sendMessage(
+	    tab.id, {greeting: "Hi from background script"}
+	).then(response => {
+	    grabbed_recipe = response.response
+
+	    var recipe_div = document.getElementById("grabbed_recipe");
+	    recipe_div.appendChild(render_json_recipe_as_html(grabbed_recipe));
+
+	}).catch(handleError);
+    }
 }
 
-/* Steps
-  List of strings
-*/
-var recipe_steps_raw = document.querySelectorAll("article")[2].querySelector("div").textContent.split("\n\n");
+/* Stores recipes in the space reserved for the plugin by the browser, not a file specified by the user. */
+function store_recipe_json(recipe_json) {
+    stored_recipes = []
+    var get_stored_recipes = browser.storage.local.get("stored_recipes")
+    get_stored_recipes.then((response) => {
+	stored_recipes = response.stored_recipes;
+    }, handleError).then((promise) => {
+	stored_recipes.push(recipe_json);
+	var storing_recipe = browser.storage.local.set({ "stored_recipes" : stored_recipes });
+	storing_recipe.then(() => {
+	    console.log("Recipe stored!");
+	}, handleError);
+    }, handleError);
+}
 
-/* Yields
-  Number + Unit
+/**
+ * Take a recipe object and return an Element object for displaying a recipe in the browser.
+ */
+function render_json_recipe_as_html(recipe_json) {
+    var recipe_div = document.createElement("div");
+    recipe_div.classList.add("recipe");
 
-  Chefkoch.de always gives yields in "Portionen", so defaulting to that as Unit and grabbing the amount directly.
-*/
-var recipe_yield_amount = document.querySelector(".recipe-servings input[name='portionen']").value;
-var recipe_yield = {amount: recipe_yield_amount, unit: "Portion"};
+    var recipe_title_h1 = document.createElement("h1");
+    recipe_title_h1.id = "recipe_name";
+    var recipe_name_text = document.createTextNode(recipe_json.recipe_name);
+    recipe_title_h1.appendChild(recipe_name_text);
+    recipe_div.appendChild(recipe_title_h1);
 
-/* Optional: Notes */
-/* None in this case */
+    var ingredients_ul = document.createElement("ul");
+    ingredients_ul.id = "ingredients";
+    for (ingredient_index in recipe_json.ingredients) {
+	var ingredient_li = document.createElement("li");
+	ingredient_li.classList.add("recipe_ingredient");
 
-grabbed_recipe = {
-    recipe_name: recipe_name,
-    ingredients: recipe_ingredients,
-    steps: recipe_steps_raw,
-    yields: [recipe_yield]
+	ingredient_amount_span = document.createElement("span");
+	ingredient_amount_span.classList.add("ingredient_amount");
+	ingredient_amount_text = document.createTextNode(recipe_json.ingredients[ingredient_index].amounts[0].amount || "");
+	ingredient_amount_span.appendChild(ingredient_amount_text);
+	ingredient_li.appendChild(ingredient_amount_span);
+
+	ingredient_unit_span = document.createElement("span");
+	ingredient_unit_span.classList.add("ingredient_unit");
+	ingredient_unit_text = document.createTextNode(recipe_json.ingredients[ingredient_index].amounts[0].unit || "");
+	ingredient_unit_span.appendChild(ingredient_unit_text);
+	ingredient_li.appendChild(ingredient_unit_span);
+
+	ingredient_name_span = document.createElement("span");
+	ingredient_name_span.classList.add("ingredient_name");
+	ingredient_name_text = document.createTextNode(recipe_json.ingredients[ingredient_index].name);
+	ingredient_name_span.appendChild(ingredient_name_text);
+	ingredient_li.appendChild(ingredient_name_span);
+
+	ingredients_ul.appendChild(ingredient_li);
+    }
+    recipe_div.appendChild(ingredients_ul);
+
+    var steps_ol = document.createElement("ol");
+    steps_ol.id = "steps";
+    for (step_index in recipe_json.steps) {
+	var step_li = document.createElement("li");
+	step_li.classList.add("recipe_step");
+	step_text = document.createTextNode(recipe_json.steps[step_index]);
+	step_li.appendChild(step_text);
+	steps_ol.appendChild(step_li);
+    }
+    recipe_div.appendChild(steps_ol);
+
+    return recipe_div;
 };
 
-alert(JSON.stringify(grabbed_recipe));
+window.onload = function() {
+    /* Grab the available recipe as soon as the user clicks on the toolbar icon. */
+    browser.tabs.query({
+	currentWindow: true,
+	active: true
+    }).then(sendMessageToTabs).catch(handleError);
+
+    /* Force handlers to load only after the DOM is parsed and ready. */
+    var save_recipe_button = document.getElementById("save_recipe_button");
+    var save_recipe_handler = function() {
+	store_recipe_json(grabbed_recipe);
+	save_recipe_button.classList.add("success");
+	save_recipe_button.textContent = "Recipe saved!";
+	save_recipe_button.removeEventListener("click", save_recipe_handler);
+    };
+    save_recipe_button.addEventListener("click", save_recipe_handler)
+};
