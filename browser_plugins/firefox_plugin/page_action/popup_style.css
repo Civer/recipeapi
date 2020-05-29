@@ -1,0 +1,7 @@
+div.button {
+    background-color: #00bbbb;
+}
+
+div.button.success {
+    background-color: #666666;
+}
